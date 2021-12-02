@@ -103,13 +103,35 @@ fn quicksort<T: PartialOrd + std::fmt::Debug>(v: &mut [T]) {
     if length < 2 {
         return;
     }
-
-    // Now choose a pivot and do the organizing.
     
-    // ...
+    // Randomly generate pivot index and move pivot to end of vector
+    let mut rng = rand::thread_rng();
 
-    let smaller = 0; // Totally wrong – you should fix this.
+    let mut pivot_index = rng.gen_range(0, length-1);
+    
+    v.swap(pivot_index, length - 1);
 
+    pivot_index = length - 1;
+
+    // Keeps track of pivot position (all values in front of v[smaller] are < pivot, all values behind it are >= pivot)
+    let mut smaller = 0; 
+
+    // For each element in front of the pivot..
+    for i in 0..pivot_index {
+
+        // If it's value is smaller than the pivot...
+        if v.get(i) < v.get(pivot_index) {
+            // Swap with our tracker variable and increase the tracker by one
+            v.swap(i, smaller);
+            smaller += 1;
+
+        }
+
+    }
+
+    // Finally, swap with the pivot
+    v.swap(pivot_index, smaller);
+    
     // Sort all the items < pivot
     quicksort(&mut v[0..smaller]);
     // Sort all the items ≥ pivot, *not* including the
