@@ -103,13 +103,35 @@ fn quicksort<T: PartialOrd + std::fmt::Debug>(v: &mut [T]) {
     if length < 2 {
         return;
     }
-
-    // Now choose a pivot and do the organizing.
     
-    // ...
+    // Randomly generate pivot index and move pivot to end of vector
+    let mut rng = rand::thread_rng();
 
-    let smaller = 0; // Totally wrong – you should fix this.
+    let mut pivot_index = rng.gen_range(0, length-1);
+    
+    v.swap(pivot_index, length - 1);
 
+    pivot_index = length - 1;
+
+    // Keeps track of pivot position (all values in front of v[smaller] are < pivot, all values behind it are >= pivot)
+    let mut smaller = 0; 
+
+    // For each element in front of the pivot..
+    for i in 0..pivot_index {
+
+        // If it's value is smaller than the pivot...
+        if v.get(i) < v.get(pivot_index) {
+            // Swap with our tracker variable and increase the tracker by one
+            v.swap(i, smaller);
+            smaller += 1;
+
+        }
+
+    }
+
+    // Finally, swap with the pivot
+    v.swap(pivot_index, smaller);
+    
     // Sort all the items < pivot
     quicksort(&mut v[0..smaller]);
     // Sort all the items ≥ pivot, *not* including the
@@ -182,9 +204,46 @@ fn merge<T: PartialOrd + std::marker::Copy + std::fmt::Debug>(xs: Vec<T>, ys: Ve
     // vector, and then push all the remaining elements from the
     // other vector onto the result.
 
-    // This is totally wrong and will not sort. You should replace it
-    // with something useful. :)
-    xs
+    let mut result = Vec::<T>::new();
+
+    // Keep track of where we are in each array
+    let mut i = 0;
+    let mut j = 0;
+
+    // While neither of the tracker values have reached the end of their vector...
+    while i < xs.len() && j < ys.len() {
+
+        // If the value from xs is less than that from ys...
+        if xs.get(i) < ys.get(j) {
+            // push the value from xs to the new vector and increment xs tracker
+            result.push(xs[i]);
+            i += 1;
+
+        // Otherwise...
+        } else {
+            // push the value from ys to the new vector and increment ys tracker
+            result.push(ys[j]);
+            j += 1;
+
+        }
+
+    }
+
+    // While there are still values left in xs...
+    while i < xs.len() {
+        // Push them to our result and increment the tracker
+        result.push(xs[i]);
+        i += 1;
+    }
+
+    // While there are still values left in ys...
+    while j < ys.len() {
+        // Push them to our result and increment the tracker
+        result.push(ys[j]);
+        j += 1;
+    }
+
+    result
 }
 
 fn is_sorted<T: PartialOrd>(slice: &[T]) -> bool {
